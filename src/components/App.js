@@ -1,15 +1,19 @@
 import React, { Component } from 'react'
 import Viewer from './Viewer';
-import { Container } from 'semantic-ui-react';
 import Header from './Header';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import DocList from './DocList';
 
 export default class App extends Component {
   render() {
     return (
-      <Container fluid={true}>
+      <Router>
         <Header />
-        <Viewer />
-      </Container>
+        <Switch>
+          <Route path="/" exact component={DocList} />
+          <Route path="/viewer/:fileName/:id" component={Viewer} />
+        </Switch>
+      </Router>
     )
   }
 }

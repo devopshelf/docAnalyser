@@ -5,6 +5,22 @@ export default (props) => {
   return (
     <Menu>
         <Menu.Item
+          name='VIEWER'
+          onClick={()=>{
+            props.showViewer();
+          }}
+        />
+        <Menu.Item
+          name='PHRASE DATA'
+          onClick={()=>{
+            props.showTable();
+          }}
+        />
+        <Menu.Item
+          style={{
+            color:"green",
+            fontWeight:"bold"
+          }}
           name='SAVE'
           onClick={()=>{
             props.handleSubmit()
@@ -13,7 +29,7 @@ export default (props) => {
         <Menu.Item
           name='GENERATE REPORT'
           onClick={()=>{
-            alert("Generating reports")
+            props.showReport();
           }}
         />
       </Menu>

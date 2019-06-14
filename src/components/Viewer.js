@@ -2,27 +2,35 @@ import React, { Component } from 'react'
 import '../css/viewer.component.css';
 import ToolBar from './ToolBar';
 import PhraseTable from './PhraseTable';
+import dummy from  "../data/dummy";
+import { Container, Dimmer, Loader } from 'semantic-ui-react';
+import Report from './Report';
+import Axios from 'axios';
 
 export default class Viewer extends Component {
   state = {
       dataArr:[],
       selected:"",
       timer:0,
-      data:`Anim <span style="color:red"> aliquip</span> quis dolor laboris minim consectetur pariatur ex sit fugiat amet nostrud commodo duis. Velit anim veniam cupidatat mollit sint aliqua culpa cupidatat incididunt fugiat mollit aliquip aute. Incididunt dolor eiusmod cillum fugiat fugiat eiusmod consequat amet qui non enim mollit in. Irure in culpa nostrud eiusmod nisi esse anim cupidatat in labore exercitation enim. Reprehenderit mollit proident ea officia.
-      Amet labore adipisicing laboris anim reprehenderit esse fugiat elit. Fugiat minim ipsum elit ea ex anim velit non nulla ullamco consequat cupidatat. Enim laborum eu culpa commodo exercitation id quis.Ex cupidatat duis pariatur eu velit aliquip exercitation nostrud dolore dolore. Est reprehenderit dolor ullamco cillum elit laborum exercitation fugiat id. Pariatur et magna enim exercitation laboris magna sit nostrud dolore ad.
-      Labore reprehenderit incididunt nulla consectetur minim quis. Ad in deserunt ea dolore pariatur commodo. Ea officia voluptate labore laboris ex nisi pariatur cillum commodo. Ad dolor id est reprehenderit. Sit labore magna cupidatat proident deserunt fugiat aliqua aute quis mollit magna reprehenderit. Nostrud nisi ad sit cillum eiusmod laboris excepteur commodo excepteur eiusmod commodo enim consequat. Labore fugiat fugiat occaecat culpa id velit nostrud duis.
-      Ut anim in minim fugiat duis. Laborum occaecat amet cillum anim minim et mollit ea amet in elit. Amet eiusmod exercitation commodo commodo sit et sit.
-      `
+      id:1,
+      data:"",
+      showTable:false,
+      showReport:false,
+      showViewer:true,
+      fileName:this.props.match.params.fileName
   }
   handleSelect = (event) =>{
     if(this.state.selected !== event.target.value.substring(event.target.selectionStart, event.target.selectionEnd) && this.state.selected !== ""){
         let endTime = ((new Date().getTime()) - this.state.timer) / 1000;
         let phraseData = {
             time:endTime,
-            phrase:this.state.selected
+            phrase:this.state.selected,
+            id:this.state.id,
+            length:this.state.selected.length
         }
         this.setState({
-            dataArr:[...this.state.dataArr,phraseData]
+            dataArr:[...this.state.dataArr,phraseData],
+            id:this.state.id + 1
         })
     }
     
@@ -32,28 +40,111 @@ export default class Viewer extends Component {
     })
 }
 
+  componentDidMount(){
+    Axios.get("http://192.168.43.192:8300/bb/rest/getDocContent",{
+      params:{
+        filename:this.state.fileName
+      }
+    })
+    .then(response =>{
+      this.setState({
+        data:response.data.docContent
+      })
+    })
+    .catch(e => console.log(e))
+  }
+
   handleSubmit= () => {
-      console.log("data is saved",this.state.dataArr);
+    console.log("Phrase data",{
+      documentId:this.props.match.params.id,
+        documentName:this.props.match.params.fileName,
+        phraseInfo:this.state.dataArr
+    })
+      Axios.post("http://192.168.43.192:8300/bb/rest/updatePhrases",{
+        documentId:this.props.match.params.id,
+        documentName:this.props.match.params.fileName,
+        phraseInfo:this.state.dataArr
+      })
+      .then(response => console.log("Data is Saved"))
+      .catch(error => console.log(error))
+      //console.log("data is saved",this.state.dataArr);
+  }
+
+  showTable = () =>{
+    this.setState({
+      showTable:true,
+      showReport:false,
+      showViewer:false
+    })
+  }
+  showViewer =()=>{
+    this.setState({
+      showTable:false,
+      showReport:false,
+      showViewer:true
+    })
+  }
+
+  showReport = () =>{
+    this.setState({
+      showTable:false,
+      showReport:true,
+      showViewer:false
+    })
+  }
+
+  deletePhrase = (id) =>{
+    let newDataArr = [...this.state.dataArr];
+    const findPhraseWithId = newDataArr.filter(d =>{
+      return d.id === id;
+    })
+    const index = newDataArr.indexOf(findPhraseWithId[0]);
+    newDataArr.splice(index,1);
+    this.setState({
+      dataArr:newDataArr
+    })
   }
     
 
 
   render() { 
+    console.log("CONSOLE",this.props.match.params.id);
     return (
-      <div>
-        <ToolBar handleSubmit={this.handleSubmit}/>
-        <textarea name="text" 
-                rows="20" 
-                cols="20" 
-                className="viewer-textarea" 
-                onSelect={this.handleSelect}
-                wrap="soft"
-                readOnly={true}
-                defaultValue={this.state.data}
-        >
-        </textarea>
-        <PhraseTable dataArr={this.state.dataArr}/>       
-      </div>
+      <>
+        {this.state.data === "" ? 
+          <Dimmer active style={{height:"100%",width:"100%"}}>
+            <Loader>Loading...</Loader>
+          </Dimmer> :
+          <Container fluid={true}>
+          <ToolBar 
+          handleSubmit={this.handleSubmit}
+          showTable={this.showTable}
+          showViewer={this.showViewer}
+          showReport = {this.showReport}
+          />
+          {this.state.showTable ? 
+            <PhraseTable 
+              dataArray={this.state.dataArr}
+              deletePhrase = {this.deletePhrase}
+            /> 
+            :
+            this.state.showReport ?
+            <Report dataArray={this.state.dataArr} />
+            :
+            <textarea name="text" 
+                    rows="20" 
+                    cols="20" 
+                    className="viewer-textarea" 
+                    onSelect={this.handleSelect}
+                    wrap="soft"
+                    readOnly={true}
+                    defaultValue={this.state.data}
+            >
+            </textarea>    
+          }
+        </Container>
+        }
+      </>
     )
   }
 }

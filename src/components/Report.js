@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import CustomMessage from './CustomMessage';
-import { Container, Table } from 'semantic-ui-react';
+import { Container, Table, Image, Grid, Segment } from 'semantic-ui-react';
 
 export default class Report extends Component {
   constructor(props) {
@@ -57,8 +57,9 @@ export default class Report extends Component {
           <CustomMessage  header='NO DATA!!'
             content='Go to viewer and select the data you want to analyse'/> :
         <Container>
-            <h1>You have marked {this.props.dataArray.length} Phrases as Important!!!</h1>
-            <img src="https://drive.google.com/file/d/14-r1tX5DR49-nZCgj5FLiB_IZN5J9Hx_/view" alt="data-mode" />
+            <h1>You have marked {this.props.dataArray.length} Phrases as Important!!!
+            Access <a href="https://binary-bombers.s3.amazonaws.com/sample.html" rel="noopener noreferrer" target="_blank">Report</a>
+            </h1>
             <Table celled striped>
               <Table.Header>
                 <Table.Row>
@@ -79,6 +80,31 @@ export default class Report extends Component {
                 {min}
               </Table.Body>
             </Table>
+            <Segment>
+            <Grid divided='vertically'>
+              <Grid.Row columns={2}>
+                <Grid.Column>
+                  <Image width="100%" src="https://binary-bombers.s3.amazonaws.com/zero.png" />
+                </Grid.Column>
+                <Grid.Column>
+                  <Image width="100%" src="https://binary-bombers.s3.amazonaws.com/one.png" />
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row columns={2}>
+                <Grid.Column>
+                  <Image width="100%" src="https://binary-bombers.s3.amazonaws.com/second.png" />
+                </Grid.Column>
+                <Grid.Column>
+                  <Image width="100%" src="https://binary-bombers.s3.amazonaws.com/three.png" />
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row columns={2}>
+                <Grid.Column>
+                  <Image width="100%" src="https://binary-bombers.s3.amazonaws.com/four.png" />
+                </Grid.Column>
+              </Grid.Row>
+             </Grid> 
+            </Segment>
         </Container>
         }
       </>

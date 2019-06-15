@@ -6,7 +6,7 @@ import dummy from  "../data/dummy";
 import { Container, Dimmer, Loader } from 'semantic-ui-react';
 import Report from './Report';
 import Axios from 'axios';
-import { ENDPOINT } from "../config/endpoints";
+import { ENDPOINT,ENDPOINT1  } from "../config/endpoints";
 
 export default class Viewer extends Component {
   state = {
@@ -66,7 +66,12 @@ export default class Viewer extends Component {
         documentName:this.props.match.params.fileName,
         phraseInfo:this.state.dataArr
       })
-      .then(response => alert("Data is Saved"))
+      .then(response => {
+          Axios.get(ENDPOINT1+"/readTrigger")
+          .then(r => console.log("trigged"))
+          .catch(e => console.log(e))
+          alert("Data is Saved")
+        })
       .catch(error => console.log(error))
       //console.log("data is saved",this.state.dataArr);
   }

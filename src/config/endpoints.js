@@ -1,0 +1,1 @@
+export const ENDPOINT = "http://192.168.43.192:8300/bb/rest";

@@ -27,7 +27,7 @@ export default (props) => {
           }}
         />
         <Menu.Item
-          name='GENERATE REPORT'
+          name='GET REPORT'
           onClick={()=>{
             props.showReport();
           }}

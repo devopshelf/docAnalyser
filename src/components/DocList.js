@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
 import dummy from "../data/dummy";
-import { Segment, Container, Message, Input, Dimmer, Loader, Card , Icon  } from 'semantic-ui-react';
+import { Segment, Container, Message, Input, Dimmer, Loader, Card , Icon, List  } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import '../css/viewer.component.css';
 import Axios from 'axios';
+import { ENDPOINT } from "../config/endpoints";
 
 export default class DocList extends Component {
   constructor(props) {
@@ -21,9 +22,9 @@ export default class DocList extends Component {
     this.setState({
       isLoading:true
     })
-    Axios.get("http://192.168.43.192:8300/bb/rest/getDocumentList")
+    Axios.get(ENDPOINT+"/getDocumentList")
     .then((response) =>{
-      console.log("DATA from DB",response.data.length)
+      //console.log("DATA from DB",response.data.length)
       this.setState({
         fileData:response.data,
         masterFileData:response.data,
@@ -51,18 +52,19 @@ export default class DocList extends Component {
   }
     
   render() {
-    console.log("DATA", this.state.fileData.length)
+    //console.log("DATA", this.state.fileData.length)
     const files = this.state.fileData.map((data,key)=>{
       const fileName = "/viewer/"+data.fileName+"/"+data.id;
         return (
-          <Link key={key} to={fileName}>
-            <Card style={{marginTop:"10px"}}>
-                <Card.Content>
-                  <Icon name="file" />
-                  <Card.Description>{data.fileName}</Card.Description>
-                </Card.Content>
-            </Card>
-          </Link>
+          <List.Item key={key} style={{margin:"20px"}}>
+              <List.Icon name='file' size='large' verticalAlign='middle' />
+              <List.Content>
+                <Link to={fileName}>
+                  <List.Header as='a'>{data.fileName}</List.Header>
+                  <List.Description as='a'>Size: {data.size / 1000}kb</List.Description>
+                </Link>
+              </List.Content>
+            </List.Item>
             )
     })
     return (
@@ -86,14 +88,13 @@ export default class DocList extends Component {
       />       
       <Segment style={{
           marginTop:"30px",
-          display:"flex",
-          flexFlow:"row wrap",
-          justifyContent:"space-between",
           minHeight:"500px",
           maxHeight:"600px",
           overflowY:"scroll"
           }}>
-        {files}
+        <List divided relaxed> 
+          {files}  
+        </List>    
       </Segment>
     </Container>
       }

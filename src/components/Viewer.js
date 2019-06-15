@@ -6,6 +6,7 @@ import dummy from  "../data/dummy";
 import { Container, Dimmer, Loader } from 'semantic-ui-react';
 import Report from './Report';
 import Axios from 'axios';
+import { ENDPOINT } from "../config/endpoints";
 
 export default class Viewer extends Component {
   state = {
@@ -41,31 +42,31 @@ export default class Viewer extends Component {
 }
 
   componentDidMount(){
-    Axios.get("http://192.168.43.192:8300/bb/rest/getDocContent",{
-      params:{
-        filename:this.state.fileName
-      }
-    })
-    .then(response =>{
-      this.setState({
-        data:response.data.docContent
+    Axios.all([
+      Axios.get(ENDPOINT+"/getDocContent",{
+        params:{
+          filename:this.state.fileName
+        }
+      }),
+      Axios.get(ENDPOINT+"/getPhrases/",{
+        params:{ documentID:this.props.match.params.id }
       })
-    })
-    .catch(e => console.log(e))
+    ])
+    .then(Axios.spread((docData,phraseData)=>{
+      this.setState({
+        data:docData.data.docContent,
+        dataArr:phraseData.data.length > 0 ? phraseData.data[0].phraseInfo : []
+      })
+    }))
   }
 
   handleSubmit= () => {
-    console.log("Phrase data",{
-      documentId:this.props.match.params.id,
-        documentName:this.props.match.params.fileName,
-        phraseInfo:this.state.dataArr
-    })
-      Axios.post("http://192.168.43.192:8300/bb/rest/updatePhrases",{
+      Axios.post(ENDPOINT+"/updatePhrases",{
         documentId:this.props.match.params.id,
         documentName:this.props.match.params.fileName,
         phraseInfo:this.state.dataArr
       })
-      .then(response => console.log("Data is Saved"))
+      .then(response => alert("Data is Saved"))
       .catch(error => console.log(error))
       //console.log("data is saved",this.state.dataArr);
   }
@@ -108,7 +109,8 @@ export default class Viewer extends Component {
 
 
   render() { 
-    console.log("CONSOLE",this.props.match.params.id);
+    //console.log("CONSOLE",this.props.match.params.id);
+     
     return (
       <>
         {this.state.data === "" ? 

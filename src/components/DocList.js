@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
-import dummy from "../data/dummy";
-import { Segment, Container, Message, Input, Dimmer, Loader, Card , Icon, List  } from 'semantic-ui-react';
+import { Segment, Container, Message, Input, Dimmer, Loader, List  } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
-import '../css/viewer.component.css';
 import Axios from 'axios';
 import { ENDPOINT } from "../config/endpoints";
 

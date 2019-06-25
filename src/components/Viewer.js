@@ -1,12 +1,12 @@
 import React, { Component } from 'react'
-import '../css/viewer.component.css';
-import ToolBar from './ToolBar';
 import PhraseTable from './PhraseTable';
-import dummy from  "../data/dummy";
-import { Container, Dimmer, Loader } from 'semantic-ui-react';
+import { Container, Dimmer, Loader, Sidebar, Segment } from 'semantic-ui-react';
 import Report from './Report';
 import Axios from 'axios';
 import { ENDPOINT,ENDPOINT1  } from "../config/endpoints";
+import ViewMode from './ViewMode';
+import MainToolBar from './toolbars/MainToolBar';
+import FeatureToolBar from './toolbars/FeatureToolBar';
 
 export default class Viewer extends Component {
   state = {
@@ -18,6 +18,10 @@ export default class Viewer extends Component {
       showTable:false,
       showReport:false,
       showViewer:true,
+      viewMode:false,
+      nightMode:false,
+      size:"15px",
+      visible:false,
       fileName:this.props.match.params.fileName
   }
   handleSelect = (event) =>{
@@ -99,6 +103,23 @@ export default class Viewer extends Component {
     })
   }
 
+  handleViewMode = () => {
+    this.setState({
+      viewMode:!this.state.viewMode
+    })
+  }
+
+  handleNightMode = () => {
+    this.setState({
+      nightMode:!this.state.nightMode
+    })
+  }
+
+  handleSize = (size) => {
+    this.setState({
+      size:size
+    })
+  }
   deletePhrase = (id) =>{
     let newDataArr = [...this.state.dataArr];
     const findPhraseWithId = newDataArr.filter(d =>{
@@ -110,46 +131,91 @@ export default class Viewer extends Component {
       dataArr:newDataArr
     })
   }
-    
+
+  showSideBar = () =>{
+    this.setState({
+      visible:true
+    })
+  }
+
+
 
 
   render() { 
     //console.log("CONSOLE",this.props.match.params.id);
-     
+    const viewStyle = {
+      width:"100%",
+      minHeight:"80vh",
+      fontSize:this.state.size,
+      overflowY:"scroll",
+      borderRadius:"5px",
+      padding:"20px",
+      backgroundColor:this.state.nightMode ? "#001628" : "white" ,
+      color:this.state.nightMode ? "#d4bc70" : "black"
+    } 
     return (
       <>
         {this.state.data === "" ? 
           <Dimmer active style={{height:"100%",width:"100%"}}>
             <Loader>Loading...</Loader>
           </Dimmer> :
-          <Container fluid={true}>
-          <ToolBar 
-          handleSubmit={this.handleSubmit}
-          showTable={this.showTable}
-          showViewer={this.showViewer}
-          showReport = {this.showReport}
-          />
-          {this.state.showTable ? 
-            <PhraseTable 
-              dataArray={this.state.dataArr}
-              deletePhrase = {this.deletePhrase}
-            /> 
-            :
-            this.state.showReport ?
-            <Report dataArray={this.state.dataArr} />
-            :
-            <textarea name="text" 
-                    rows="20" 
-                    cols="20" 
-                    className="viewer-textarea" 
-                    onSelect={this.handleSelect}
-                    wrap="soft"
-                    readOnly={true}
-                    defaultValue={this.state.data}
-            >
-            </textarea>    
-          }
-        </Container>
+          <>
+             <FeatureToolBar
+                  viewMode={this.state.viewMode}
+                  handleViewMode={this.handleViewMode}
+                  nightMode={this.state.nightMode}
+                  handleNightMode={this.handleNightMode}
+                  handleSize = {this.handleSize}
+                  showSideBar={this.showSideBar}
+                  visible={this.state.visible}
+                  showViewer = {this.state.showViewer}
+                  handleSubmit={this.handleSubmit}
+                />
+              <Sidebar.Pushable as={Segment}>
+            <Container fluid={true}>
+              <MainToolBar 
+              showTable={this.showTable}
+              showViewer={this.showViewer}
+              showReport = {this.showReport}
+              visible={this.state.visible}
+              handleSidebarHide = { () => {
+                this.setState({
+                  visible:false
+                })
+              } }
+              />
+            <Sidebar.Pusher dimmed={this.state.visible}>
+              {this.state.showTable ? 
+                <PhraseTable 
+                  dataArray={this.state.dataArr}
+                  deletePhrase = {this.deletePhrase}
+                /> 
+                :
+                this.state.showReport ?
+                <Report dataArray={this.state.dataArr} />
+                :
+                <>
+                {this.state.viewMode ? 
+                <ViewMode viewStyle={viewStyle} fileContent={this.state.data} phraseData={this.state.dataArr}/> :
+                  <textarea 
+                          name="text" 
+                          rows="20" 
+                          cols="20" 
+                          style={viewStyle} 
+                          onSelect={this.handleSelect}
+                          wrap="soft"
+                          readOnly={true}
+                          defaultValue={this.state.data}
+                  >
+                  </textarea>   
+                }
+                </>
+              }
+              
+            </Sidebar.Pusher>  
+          </Container>
+          </Sidebar.Pushable>
+          </>
         }
       </>
     )

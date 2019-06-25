@@ -1,5 +1,5 @@
 import React from 'react'
-import { Table , Icon } from 'semantic-ui-react';
+import { Table , Icon, Container } from 'semantic-ui-react';
 import CustomMessage from './CustomMessage';
 
 export default class PhraseTable extends React.Component {
@@ -67,7 +67,9 @@ export default class PhraseTable extends React.Component {
       }
     })
     return (
-      <>
+      <Container fluid={true} style={{
+        minHeight:"400px"
+      }}>
       { this.state.dataArray.length < 1 ? 
      <CustomMessage  header='NO DATA!!'
      content='Go to viewer and select the data you want to analyse'/>  :
@@ -89,7 +91,7 @@ export default class PhraseTable extends React.Component {
         </Table.Header>
       </Table>
       }
-      </>
+      </Container>
     )
   }
 }

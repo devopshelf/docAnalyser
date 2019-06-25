@@ -21,30 +21,37 @@ Aliquip nulla dolore non nisi aute. Nostrud commodo nisi qui sit non enim. Aute 
 
 const fileData = [
     {
+        id:1,
         fileName:"abc1",
         location:"#"
     },
     {
+        id:2,
         fileName:"abc2",
         location:"#"
     },
     {
+        id:3,
         fileName:"abc4",
         location:"#"
     },
     {
+        id:4,
         fileName:"abc13",
         location:"#"
     },
     {
+        id:5,
         fileName:"abc23",
         location:"#"
     },
     {
+        id:6,
         fileName:"abc47",
         location:"#"
     },
     {
+        id:7,
         fileName:"abc18",
         location:"#"
     }

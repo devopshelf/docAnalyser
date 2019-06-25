@@ -52,7 +52,9 @@ export default class Report extends Component {
     })
   
     return (
-      <>
+      <Container fluid={true} style={{
+        minHeight:"400px"
+      }}>
         { this.state.dataArray.length < 1 ? 
           <CustomMessage  header='NO DATA!!'
             content='Go to viewer and select the data you want to analyse'/> :
@@ -107,7 +109,7 @@ export default class Report extends Component {
             </Segment>
         </Container>
         }
-      </>
+      </Container>
     )
   }
 }

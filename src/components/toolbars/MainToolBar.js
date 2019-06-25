@@ -1,12 +1,20 @@
 import React from 'react'
-import { Menu } from 'semantic-ui-react';
+import { Menu, Sidebar } from 'semantic-ui-react';
 
 export default (props) => {
   return (
-    <Menu>
+    <Sidebar
+            as={Menu}
+            animation='scale down'
+            icon='labeled'
+            onHide={props.handleSidebarHide}
+            vertical
+            visible={props.visible}
+            width='thin'
+          >
         <Menu.Item
-          name='VIEWER'
-          icon="eye"
+          name='HOME'
+          icon="home"
           onClick={()=>{
             props.showViewer();
           }}
@@ -19,23 +27,12 @@ export default (props) => {
           }}
         />
         <Menu.Item
-          style={{
-            color:"green",
-            fontWeight:"bold"
-          }}
-          name='SAVE'
-          icon="save"
-          onClick={()=>{
-            props.handleSubmit()
-          }}
-        />
-        <Menu.Item
-          name='GET REPORT'
+          name='REPORTS'
           icon="file alternate"
           onClick={()=>{
             props.showReport();
           }}
         />
-      </Menu>
+      </Sidebar>
   )
 }
